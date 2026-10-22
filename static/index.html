@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>iP video</title>
+<link rel="stylesheet" href="style.css">
+</head><body>
+<div class="gate" id="gate"><div>
+<h1 style="text-align:center">iP <b>video</b></h1>
+<p class="sub">أدخل الرمز للدخول</p>
+<input id="code" type="password" inputmode="numeric" autocomplete="off">
+<button id="go">دخول</button><p class="err" id="gerr"></p>
+</div></div>
+<main id="app" hidden>
+<h1>iP <b>video</b></h1>
+<p class="sub">ضغط الفيديو بجودة عالية على السيرفر. يشتغل مع الفيديوهات الكبيرة.</p>
+<label class="drop"><input type="file" id="file" accept="video/*" multiple>
+<strong>اختر الفيديوهات</strong><span class="sub">اضغط هنا لاختيار فيديو من جوالك</span></label>
+<section class="ctl">
+<div class="row"><label for="q">الجودة <em id="qv" style="font-style:normal;color:var(--acc)">80%</em></label>
+<input type="range" id="q" min="10" max="100" value="80"></div>
+<div class="row"><label for="mh">الدقة</label><select id="mh">
+<option value="0">الأصلية</option><option value="1080">1080p</option><option value="720">720p</option><option value="480">480p</option></select></div>
+<div class="row"><label for="pr">السرعة</label><select id="pr">
+<option value="ultrafast">الأسرع</option><option value="veryfast">أصغر حجم (أبطأ)</option></select></div>
+<p class="hint">الضغط ياخذ وقت لأن السيرفر مجاني. بعد الرفع خلّ الصفحة مفتوحة لين يخلص.</p>
+</section>
+<div id="list"></div>
+</main>
+<script>
+var CODE="";
+function $(i){return document.getElementById(i)}
+function fmt(b){return b<1048576?(b/1024).toFixed(1)+" KB":(b/1048576).toFixed(2)+" MB"}
+function unlock(){
+  var c=$("code").value.trim();
+  fetch("/check",{method:"POST",headers:{"X-Code":c}}).then(function(r){return r.json()}).then(function(j){
+    if(j.ok){CODE=c;$("gate").hidden=true;$("app").hidden=false}
+    else{$("gerr").textContent="الرمز غير صحيح";$("code").value=""}
+  }).catch(function(){$("gerr").textContent="تعذر الاتصال بالسيرفر، جرّب بعد شوي"});
+}
+$("go").onclick=unlock;
+$("code").onkeydown=function(e){if(e.key==="Enter")unlock()};
+$("q").oninput=function(){$("qv").textContent=$("q").value+"%"};
+</script>
+<script src="page.js"></script>
+</body></html>
+
